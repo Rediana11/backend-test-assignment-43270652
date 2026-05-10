@@ -1,6 +1,14 @@
 package com.telepaxx.assignment;
 
+import com.telepaxx.assignment.model.PatientRecord;
+
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response;
+
+import java.util.List;
 
 /**
  * HTTP endpoint for patient search.
@@ -19,6 +27,16 @@ import jakarta.ws.rs.Path;
 @Path("/search")
 public class PatientSearchResource {
 
-    // TODO: inject PatientSearchService and implement the endpoint
+    @Inject
+    PatientSearchService searchService;
 
+    @GET
+    public Response search(
+            @QueryParam("patientId") String patientId,
+            @QueryParam("lastName") String lastName) {
+     
+        List<PatientRecord> results = searchService.search(patientId, lastName);
+
+        return Response.ok(results).build();
+    }
 }
