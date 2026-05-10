@@ -84,14 +84,13 @@ class PatientSearchResourceIT {
     }
 
     @Test
-    void searchWithNoResults_returns200WithEmptyList() {
+    void searchWithNoResults_returns204NoContent() {
         given()
             .queryParam("patientId", "NONEXISTENT_ID_99999")
         .when()
             .get("/search")
         .then()
-            .statusCode(200)
-            .body("size()", equalTo(0));
+            .statusCode(204);
     }
 
     @Test

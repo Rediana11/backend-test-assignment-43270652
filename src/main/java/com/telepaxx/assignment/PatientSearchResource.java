@@ -40,6 +40,10 @@ public class PatientSearchResource {
             @QueryParam("lastName") String lastName) {
         List<PatientRecord> results = searchService.search(patientId, lastName);
 
+        if (results.isEmpty()) {
+            return Response.noContent().build();
+        }
+
         return Response.ok(results).build();
     }
 }
