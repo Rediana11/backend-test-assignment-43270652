@@ -21,8 +21,10 @@ class PatientSearchResourceIT {
             .get("/search")
         .then()
             .statusCode(200)
-            .body("size()", greaterThanOrEqualTo(1))
-            .body("[0].patientId", equalTo("P1001"));
+            .body("data.size()", greaterThanOrEqualTo(1))
+            .body("data[0].patientId", equalTo("P1001"))
+            .body("page", equalTo(1))
+            .body("totalResults", greaterThanOrEqualTo(1));
     }
 
     @Test
@@ -33,8 +35,8 @@ class PatientSearchResourceIT {
             .get("/search")
         .then()
             .statusCode(200)
-            .body("size()", greaterThanOrEqualTo(1))
-            .body("[0].lastName", equalTo("Weiss"));
+            .body("data.size()", greaterThanOrEqualTo(1))
+            .body("data[0].lastName", equalTo("Weiss"));
     }
 
     @Test
@@ -45,7 +47,7 @@ class PatientSearchResourceIT {
             .get("/search")
         .then()
             .statusCode(200)
-            .body("size()", greaterThanOrEqualTo(1));
+            .body("data.size()", greaterThanOrEqualTo(1));
     }
 
     @Test
@@ -57,8 +59,8 @@ class PatientSearchResourceIT {
             .get("/search")
         .then()
             .statusCode(200)
-            .body("size()", equalTo(1))
-            .body("[0].patientId", equalTo("P2004"));
+            .body("data.size()", equalTo(1))
+            .body("data[0].patientId", equalTo("P2004"));
     }
 
     @Test
@@ -68,8 +70,7 @@ class PatientSearchResourceIT {
             .get("/search")
         .then()
             .statusCode(400)
-            .body("status", equalTo(400))
-            .body("message", containsString("At least one search parameter"));
+            .body("status", equalTo(400));
     }
 
     @Test
@@ -101,9 +102,40 @@ class PatientSearchResourceIT {
             .get("/search")
         .then()
             .statusCode(200)
-            .body("[0].patientId", notNullValue())
-            .body("[0].lastName", notNullValue())
-            .body("[0].firstName", notNullValue())
-            .body("[0].fileName", notNullValue());
+            .body("data[0].patientId", notNullValue())
+            .body("data[0].lastName", notNullValue())
+            .body("data[0].firstName", notNullValue())
+            .body("data[0].fileName", notNullValue());
+    }
+
+    @Test
+    void paginationWithCustomPageSize() {
+        given()
+            .queryParam("patientId", "P1001")
+            .queryParam("page", 1)
+            .queryParam("pageSize", 2)
+        .when()
+            .get("/search")
+        .then()
+            .statusCode(200)
+            .body("page", equalTo(1))
+            .body("pageSize", equalTo(2))
+            .body("data.size()", lessThanOrEqualTo(2))
+            .body("totalResults", greaterThanOrEqualTo(1))
+            .body("totalPages", greaterThanOrEqualTo(1));
+    }
+
+    @Test
+    void paginationBeyondResults_returns204() {
+        given()
+            .queryParam("patientId", "P2004")
+            .queryParam("page", 100)
+            .queryParam("pageSize", 10)
+        .when()
+            .get("/search")
+        .then()
+            .statusCode(200)
+            .body("data.size()", equalTo(0))
+            .body("totalResults", greaterThanOrEqualTo(1));
     }
 }

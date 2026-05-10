@@ -1,9 +1,10 @@
 package com.telepaxx.assignment;
 
-import com.telepaxx.assignment.exception.MissingSearchCriteriaException;
+import com.telepaxx.assignment.model.PaginatedResponse;
 import com.telepaxx.assignment.model.PatientRecord;
 
 import jakarta.inject.Inject;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -16,16 +17,12 @@ import java.util.List;
 /**
  * HTTP endpoint for patient search.
  *
- * TODO: Design and implement the search endpoint.
- *
  * Requirements:
  *   - Accept search criteria: PatientID, last name, or both
  *   - Return a list of matching DICOM files with metadata you consider relevant
  *   - Handle the case where no results are found
  *
  * Important implementation decisions should be documented in NOTES.md.
- *
- * This bootstrap path can be kept or changed if justified.
  */
 @Path("/search")
 public class PatientSearchResource {
@@ -37,13 +34,17 @@ public class PatientSearchResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response search(
             @QueryParam("patientId") String patientId,
-            @QueryParam("lastName") String lastName) {
+            @QueryParam("lastName") String lastName,
+            @QueryParam("page") @DefaultValue("1") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize) {
+
         List<PatientRecord> results = searchService.search(patientId, lastName);
 
         if (results.isEmpty()) {
             return Response.noContent().build();
         }
 
-        return Response.ok(results).build();
+        PaginatedResponse<PatientRecord> response = PaginatedResponse.of(results, page, pageSize);
+        return Response.ok(response).build();
     }
 }
