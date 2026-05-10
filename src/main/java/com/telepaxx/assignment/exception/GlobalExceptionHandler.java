@@ -1,5 +1,7 @@
 package com.telepaxx.assignment.exception;
 
+import com.telepaxx.assignment.exception.model.ErrorResponse;
+
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
@@ -14,12 +16,11 @@ public class GlobalExceptionHandler implements ExceptionMapper<Exception> {
     public Response toResponse(Exception exception) {
 
         if (exception instanceof BadRequestException) {
-            Log.errorf("Bad request: %s", exception.getMessage());
-            return buildResponse(400, "Bad Request", "Uncorrect api call, you are missing something!");
+            return buildResponse(400, "Bad Request", exception.getMessage());
         }
 
         Log.errorf("Unhandled exception: %s", exception.getMessage());
-        return buildResponse(500, "Internal Server Error", "An unexpected error occurred!");
+        return buildResponse(500, "Internal Server Error", "An unexpected error occurred");
     }
 
     private Response buildResponse(int status, String error, String message) {

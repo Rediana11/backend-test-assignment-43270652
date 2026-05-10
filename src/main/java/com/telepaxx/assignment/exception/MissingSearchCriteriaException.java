@@ -1,9 +1,11 @@
 package com.telepaxx.assignment.exception;
 
+import jakarta.ws.rs.BadRequestException;
+
 public class MissingSearchCriteriaException extends BadRequestException {
 
     public MissingSearchCriteriaException() {
-        super("At least patient id or lastName must be provided");
+        super("At least one search parameter must be provided: patientId or lastName");
     }
 
     public MissingSearchCriteriaException(String message) {

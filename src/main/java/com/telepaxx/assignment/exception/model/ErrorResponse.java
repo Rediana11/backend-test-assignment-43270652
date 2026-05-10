@@ -1,4 +1,4 @@
-package com.telepaxx.assignment.exception;
+package com.telepaxx.assignment.exception.model;
 
 import java.time.Instant;
 
