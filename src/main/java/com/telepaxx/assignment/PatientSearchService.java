@@ -1,5 +1,6 @@
 package com.telepaxx.assignment;
 
+import com.telepaxx.assignment.exception.MissingSearchCriteriaException;
 import com.telepaxx.assignment.model.PatientRecord;
 import com.telepaxx.assignment.roster.RosterLoader;
 
@@ -24,6 +25,10 @@ public class PatientSearchService {
     RosterLoader rosterLoader;
 
     public List<PatientRecord> search(String patientId, String lastName) {
+        if ((patientId == null || patientId.isBlank()) && (lastName == null || lastName.isBlank())) {
+            throw new MissingSearchCriteriaException();
+        }
+
         List<PatientRecord> allRecords = rosterLoader.getPatients();
 
         return allRecords.stream()

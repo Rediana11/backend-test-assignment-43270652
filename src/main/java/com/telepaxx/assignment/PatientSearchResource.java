@@ -1,11 +1,14 @@
 package com.telepaxx.assignment;
 
+import com.telepaxx.assignment.exception.MissingSearchCriteriaException;
 import com.telepaxx.assignment.model.PatientRecord;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
@@ -31,10 +34,10 @@ public class PatientSearchResource {
     PatientSearchService searchService;
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public Response search(
             @QueryParam("patientId") String patientId,
             @QueryParam("lastName") String lastName) {
-     
         List<PatientRecord> results = searchService.search(patientId, lastName);
 
         return Response.ok(results).build();
